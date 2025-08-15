@@ -45,13 +45,25 @@ class CoffeeFlavorPredictor:
         try:
             if not os.path.exists(model_path):
                 raise FileNotFoundError(f"Model file not found: {model_path}")
-                
-            self.model = joblib.load(model_path)
-            logger.info(f"Successfully loaded model from {model_path}")
             
-            # If model has feature engineering, use it
-            if hasattr(self.model, 'feature_engineering'):
-                self.feature_engineering = self.model.feature_engineering
+            # Load the model with metadata
+            model_data = joblib.load(model_path)
+            
+            # If it's the new format with metadata
+            if isinstance(model_data, dict) and 'model' in model_data:
+                # Store the model
+                self.model = model_data['model']
+                
+                # If model has feature engineering, use it
+                if hasattr(self.model, 'feature_engineering'):
+                    self.feature_engineering = self.model.feature_engineering
+            else:
+                # For backward compatibility with old format
+                self.model = model_data
+                if hasattr(self.model, 'feature_engineering'):
+                    self.feature_engineering = self.model.feature_engineering
+            
+            logger.info(f"Successfully loaded model from {model_path}")
             
         except Exception as e:
             logger.error(f"Error loading model: {str(e)}", exc_info=True)

@@ -1,6 +1,8 @@
 import os
 import sys
+import joblib
 from improved_predict import CoffeeFlavorPredictor, get_example_input
+from improved_model import AdvancedFeatureEngineering
 
 def run_tests():
     """Run a series of test predictions to verify the model works correctly."""

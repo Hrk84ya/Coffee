@@ -239,11 +239,28 @@ def evaluate_model(model, X_test, y_test):
 
 def save_model(model, model_dir='models'):
     """Save the trained model and preprocessing pipeline."""
+    import sys
+    import inspect
+    
+    # Get the source code of the AdvancedFeatureEngineering class
+    from improved_model import AdvancedFeatureEngineering
+    
+    # Create a dictionary with the class definition
+    model_metadata = {
+        'class_def': {
+            'module': AdvancedFeatureEngineering.__module__,
+            'name': AdvancedFeatureEngineering.__name__,
+            'source': inspect.getsource(AdvancedFeatureEngineering)
+        },
+        'model': model
+    }
+    
     os.makedirs(model_dir, exist_ok=True)
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     model_path = os.path.join(model_dir, f'coffee_flavor_model_{timestamp}.pkl')
     
-    joblib.dump(model, model_path)
+    # Save the model with metadata
+    joblib.dump(model_metadata, model_path)
     logger.info(f"Model saved to {model_path}")
     
     return model_path
