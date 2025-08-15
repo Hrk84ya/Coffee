@@ -1,0 +1,126 @@
+<!-- templates/index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+	<h2>Brew the Perfect Cup</h2>
+	<p class="subtitle">Enter your coffee details to discover its flavor profile</p>
+	
+	<form id="coffeeForm">
+		<div class="form-grid">
+			<div class="form-group">
+				<label for="brewing_method">Brewing Method</label>
+				<select id="brewing_method" name="brewing_method" required>
+					<option value="">Select method...</option>
+					<option value="Espresso">Espresso</option>
+					<option value="Pour Over">Pour Over</option>
+					<option value="French Press">French Press</option>
+					<option value="AeroPress">AeroPress</option>
+					<option value="Moka Pot">Moka Pot</option>
+					<option value="Cold Brew">Cold Brew</option>
+				</select>
+			</div>
+			
+			<div class="form-group">
+				<label for="bean_type">Bean Type</label>
+				<select id="bean_type" name="bean_type" required>
+					<option value="">Select bean type...</option>
+					<option value="Arabica">Arabica</option>
+					<option value="Robusta">Robusta</option>
+					<option value="Liberica">Liberica</option>
+					<option value="Excelsa">Excelsa</option>
+				</select>
+			</div>
+			
+			<div class="form-group">
+				<label for="roast_level">Roast Level</label>
+				<select id="roast_level" name="roast_level" required>
+					<option value="">Select roast level...</option>
+					<option value="Light">Light</option>
+					<option value="Medium">Medium</option>
+					<option value="Medium-Dark">Medium-Dark</option>
+					<option value="Dark">Dark</option>
+				</select>
+			</div>
+			
+			<div class="form-group">
+				<label for="grind_size">Grind Size</label>
+				<select id="grind_size" name="grind_size" required>
+					<option value="">Select grind size...</option>
+					<option value="Extra Fine">Extra Fine (Espresso)</option>
+					<option value="Fine">Fine (Moka Pot, AeroPress)</option>
+					<option value="Medium">Medium (Pour Over, Drip)</option>
+					<option value="Coarse">Coarse (French Press, Cold Brew)</option>
+				</select>
+			</div>
+			
+			<div class="form-group">
+				<label for="brew_time">Brew Time (seconds)</label>
+				<div class="range-container">
+					<input type="range" id="brew_time" name="brew_time" min="15" max="300" value="120" class="slider">
+					<span class="range-value" id="brew_time_value">120s</span>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="water_temp">Water Temperature (°C)</label>
+				<div class="range-container">
+					<input type="range" id="water_temp" name="water_temp" min="80" max="100" value="92" class="slider">
+					<span class="range-value" id="water_temp_value">92°C</span>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="coffee_water_ratio">Coffee to Water Ratio</label>
+				<div class="range-container">
+					<input type="range" id="coffee_water_ratio" name="coffee_water_ratio" min="10" max="20" value="16" step="0.5" class="slider">
+					<span class="range-value" id="ratio_value">1:16</span>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="acidity_pref">Acidity Preference</label>
+				<div class="range-container">
+					<input type="range" id="acidity_pref" name="acidity_pref" min="0" max="10" value="5" step="0.5" class="slider">
+					<span class="range-value" id="acidity_pref_value">5.0</span>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="bitterness_pref">Bitterness Preference</label>
+				<div class="range-container">
+					<input type="range" id="bitterness_pref" name="bitterness_pref" min="0" max="10" value="5" step="0.5" class="slider">
+					<span class="range-value" id="bitterness_pref_value">5.0</span>
+				</div>
+			</div>
+		</div>
+		
+		<button type="submit" class="btn btn-block" id="predictBtn">
+			<i class="fas fa-mug-hot"></i> Predict Flavour
+		</button>
+	</form>
+	
+	<div id="loading" style="display: none; text-align: center; margin: 2rem 0;">
+		<div class="spinner"></div>
+		<p>Analyzing your brew...</p>
+	</div>
+	
+	<div id="results" class="results">
+		<div class="card" style="margin-top: 1rem;">
+			<h3>Your Flavor Profile</h3>
+			<div class="summary">
+				<div>
+					<span class="score" id="predictionScore">—</span>
+					<span>/ 10</span>
+				</div>
+				<div>
+					<strong>Confidence:</strong> <span id="confidence">—</span>%
+				</div>
+			</div>
+			<p id="interpretation" class="subtitle">&nbsp;</p>
+			<h4>Detected Flavor Notes</h4>
+			<div class="flavor-chips" id="flavorChips"></div>
+		</div>
+	</div>
+</div>
+{% endblock %}
