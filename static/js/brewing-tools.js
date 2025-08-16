@@ -91,7 +91,33 @@ class BrewingTimer {
         
         const minutes = Math.floor(this.remainingTime / 60);
         const seconds = this.remainingTime % 60;
-        this.timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        const displayText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        // Add visual feedback when time is running low (last 10 seconds)
+        if (this.remainingTime <= 10 && this.remainingTime > 0) {
+            this.timerDisplay.style.color = '#e67e22';
+            this.timerDisplay.style.fontWeight = 'bold';
+            this.timerDisplay.style.transform = 'scale(1.05)';
+        } else {
+            this.timerDisplay.style.color = '';
+            this.timerDisplay.style.fontWeight = '';
+            this.timerDisplay.style.transform = '';
+        }
+        
+        this.timerDisplay.textContent = displayText;
+        
+        // Update page title when timer is running
+        if (this.isRunning && this.remainingTime > 0) {
+            document.title = `[${displayText}] - Coffee Timer`;
+        } else if (this.remainingTime === 0) {
+            document.title = '⏰ Time\'s Up! - Coffee Timer';
+            // Reset title after 5 seconds
+            setTimeout(() => {
+                if (document.title === '⏰ Time\'s Up! - Coffee Timer') {
+                    document.title = 'Coffee Flavour Predictor';
+                }
+            }, 5000);
+        }
     }
 
     updateButtonStates() {
@@ -107,20 +133,71 @@ class BrewingTimer {
         this.remainingTime = 0;
         this.updateDisplay();
         this.updateButtonStates();
+        
+        // Visual feedback
+        if (this.timerDisplay) {
+            this.timerDisplay.style.animation = 'pulse 1s infinite';
+            this.timerDisplay.style.color = '#e74c3c';
+            
+            // Reset animation after 5 seconds
+            setTimeout(() => {
+                if (this.timerDisplay) {
+                    this.timerDisplay.style.animation = '';
+                    this.timerDisplay.style.color = '';
+                }
+            }, 5000);
+        }
+        
         this.notifyUser("Brew Time's Up!");
     }
 
     notifyUser(message) {
-        // Play sound
-        this.notificationSound.play().catch(e => console.log("Couldn't play sound:", e));
+        // Play sound with a more noticeable audio
+        try {
+            // Try to play the notification sound
+            const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+            audio.volume = 0.5; // Set volume to 50%
+            
+            // Play multiple beeps for better notification
+            const playBeeps = (count) => {
+                if (count <= 0) return;
+                
+                const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+                audio.volume = 0.5;
+                audio.play().then(() => {
+                    setTimeout(() => playBeeps(count - 1), 500);
+                }).catch(e => console.log("Couldn't play sound:", e));
+            };
+            
+            // Play 3 beeps
+            playBeeps(3);
+            
+        } catch (e) {
+            console.error("Error playing sound:", e);
+        }
         
         // Show notification if permitted
         if (Notification.permission === 'granted') {
-            new Notification('Coffee Timer', { body: message });
+            try {
+                const notification = new Notification('☕ Coffee Timer', { 
+                    body: message,
+                    icon: 'https://cdn-icons-png.flaticon.com/512/924/924514.png',
+                    vibrate: [200, 100, 200] // Vibrate pattern
+                });
+                
+                // Focus the window when notification is clicked
+                notification.onclick = () => {
+                    window.focus();
+                    notification.close();
+                };
+                
+            } catch (e) {
+                console.error("Error showing notification:", e);
+            }
         }
         
-        // Fallback alert
-        alert(message);
+        // Fallback alert with emoji
+        alert(`⏰ ${message} ☕`);
     }
 }
 
