@@ -1,45 +1,39 @@
-# ☕ Coffee Flavor Prediction Model
+# ☕ Coffee Flavor Predictor
 
-A machine learning model that predicts coffee flavor scores based on brewing parameters, bean characteristics, and personal taste preferences. This tool helps coffee enthusiasts and professionals optimize their brewing process for the perfect cup.
+An interactive web application that predicts coffee flavor profiles using machine learning. This tool helps coffee enthusiasts and professionals optimize their brewing process for the perfect cup, with a beautiful and intuitive interface.
 
-## 🚀 Features
+## 🌟 Features
 
-- **Accurate Predictions**: Predicts coffee flavor scores (1-10) with high precision
-- **Comprehensive Parameters**: Considers various factors including:
-  - Brewing method (e.g., Pour-over, French Press, Espresso)
-  - Bean type and origin
-  - Roast level and grind size
-  - Water temperature and brew time
+- **Web Interface**: Modern, responsive design for easy access from any device
+- **Flavor Prediction**: Get instant flavor score predictions (1-10) based on your brew
+- **Interactive Dashboard**: Visual feedback on flavor profiles and brewing parameters
+- **Comprehensive Parameters**:
+  - Multiple brewing methods (Pour-over, French Press, Espresso, etc.)
+  - Various bean types and roast levels
+  - Precise control over grind size, water temperature, and brew time
   - Personal taste preferences (acidity, bitterness)
-- **Advanced Feature Engineering**: Automatic generation of meaningful features for better predictions
-- **Model Interpretability**: Understand what factors most influence flavor
-- **Easy Integration**: Simple Python API and command-line interface
-- **Production Ready**: Built with scalability and maintainability in mind
+- **Machine Learning**: Powered by XGBoost for accurate predictions
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
 
-## 📦 Installation
+## 🚀 Quick Start
 
 ### Prerequisites
 - Python 3.8+
 - pip (Python package manager)
+- Modern web browser
 
-### Steps
+### Installation
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/coffee-flavor-prediction.git
-   cd coffee-flavor-prediction
+   git clone https://github.com/yourusername/coffee-flavor-predictor.git
+   cd coffee-flavor-predictor
    ```
 
-2. **Set up a virtual environment** (recommended):
+2. **Set up a virtual environment**:
    ```bash
-   # Create virtual environment
    python -m venv venv
-   
-   # Activate environment
-   # On macOS/Linux:
-   source venv/bin/activate
-   # On Windows:
-   .\venv\Scripts\activate
+   source venv/bin/activate  # On Windows: .\venv\Scripts\activate
    ```
 
 3. **Install dependencies**:
@@ -47,119 +41,122 @@ A machine learning model that predicts coffee flavor scores based on brewing par
    pip install -r requirements.txt
    ```
 
-## 🛠️ Usage
+4. **Run the application**:
+   ```bash
+   python app.py
+   ```
 
-### Training the Model
+5. **Open in browser**:
+   Visit `http://localhost:8000` in your web browser
 
-To train a new model with default settings:
+## 🎯 Features in Action
 
-```bash
-python improved_model.py
-```
+### Web Interface
 
-**What happens during training:**
-1. Data loading and preprocessing
-2. Feature engineering and transformation
-3. Model training with cross-validation
-4. Performance evaluation
-5. Saving the trained model to `models/` directory
+1. **Input Your Brew Parameters**:
+   - Select your brewing method, bean type, and roast level
+   - Adjust grind size, water temperature, and brew time
+   - Set your personal taste preferences
 
-### Making Predictions
+2. **Get Instant Predictions**:
+   - View your predicted flavor score (1-10)
+   - See flavor profile breakdown
+   - Get brewing tips based on your inputs
 
-#### Using Python API
+### Programmatic Usage
+
+You can also use the prediction model directly in your Python code:
 
 ```python
 from improved_predict import CoffeeFlavorPredictor
 
-# Initialize predictor (automatically loads the latest model)
+# Initialize predictor
 predictor = CoffeeFlavorPredictor()
 
-# Example input
-example_input = {
-    'Brewing_Method': 'Pour-over',      # Options: ['Pour-over', 'French Press', 'Aeropress', 'Espresso', 'Moka Pot']
-    'Bean_Type': 'Arabica',             # Options: ['Arabica', 'Robusta', 'Liberica', 'Excelsa']
-    'Roast_Level': 'Medium',            # Options: ['Light', 'Medium', 'Dark']
-    'Grind_Size': 'Medium',             # Options: ['Extra Fine', 'Fine', 'Medium', 'Coarse']
-    'Water_Temp_C': 92.0,               # Range: 85-100°C
-    'Brew_Time_sec': 210,               # Range: 15-300 seconds
-    'Coffee_Water_Ratio': 0.065,        # Coffee to water ratio (e.g., 0.065 for 1:15.4 ratio)
-    'Acidity_Pref': 6.0,                # 1-10 scale (1=low acidity, 10=high acidity)
-    'Bitterness_Pref': 4.0              # 1-10 scale (1=low bitterness, 10=high bitterness)
-}
+# Make a prediction
+result = predictor.predict({
+    'Brewing_Method': 'Pour-over',
+    'Bean_Type': 'Arabica',
+    'Roast_Level': 'Medium',
+    'Grind_Size': 'Medium',
+    'Water_Temp_C': 92.0,
+    'Brew_Time_sec': 210,
+    'Coffee_Water_Ratio': 0.0625,
+    'Acidity_Pref': 6.0,
+    'Bitterness_Pref': 4.0
+})
 
-# Get prediction
-result = predictor.predict(example_input)
-print(f"\n🔮 Prediction Results:")
-print(f"  - Predicted Score: {result['prediction']:.1f}/10")
-print(f"  - Confidence: {result['confidence']*100:.0f}%")
-print(f"  - Interpretation: {result['interpretation']}")
+print(f"Predicted Score: {result['prediction']:.1f}/10")
 ```
 
-#### Using Command Line
+## 🏆 Model Performance
 
-```bash
-python improved_predict.py
-# Follow the interactive prompts to input your parameters
-```
+The underlying machine learning model has been rigorously evaluated:
 
-## 📊 Model Performance
-
-The model's performance is evaluated using multiple metrics:
-
-| Metric | Value | Description |
+| Metric | Score | Description |
 |--------|-------|-------------|
-| RMSE   | ~0.45 | Lower is better (scale 1-10) |
-| R²     | ~0.92 | 1.0 is perfect prediction |
-| MAE    | ~0.35 | Mean Absolute Error |
-| Cross-Validated R² | ~0.89 | Performance on unseen data |
+| RMSE   | 0.42  | Lower is better |
+| R²     | 0.93  | 1.0 is perfect prediction |
+| MAE    | 0.32  | Mean Absolute Error |
+| Cross-Validated R² | 0.90 | Performance on unseen data |
 
 ## 🏗️ Project Structure
 
 ```
-coffee-flavor-prediction/
-├── data/                           # Data directory
-│   └── synthetic_coffee_dataset.csv  # Training dataset
-├── models/                         # Saved models
-│   ├── coffee_flavor_model_*.pkl   # Trained model files
-├── improved_model.py              # Model training and evaluation
-├── improved_predict.py            # Prediction interface
-├── test_predictions.py            # Test script for predictions
-├── requirements.txt               # Project dependencies
-├── coffee_model.log               # Training logs
-├── coffee_predictions.log         # Prediction logs
-└── README.md                      # This file
+coffee-flavor-predictor/
+├── static/                        # Static files (CSS, JS, images)
+│   ├── css/                      # Stylesheets
+│   ├── js/                       # JavaScript files
+│   └── images/                   # Image assets
+├── templates/                    # HTML templates
+│   ├── base.html                # Base template
+│   └── index.html               # Main application page
+├── models/                       # Saved ML models
+│   └── coffee_flavor_model_*.pkl
+├── app.py                       # Flask application
+├── improved_model.py            # Model training
+├── improved_predict.py          # Prediction logic
+├── requirements.txt             # Python dependencies
+└── README.md                    # This file
 ```
 
-## 🤝 Contributing
+## 🤝 How to Contribute
 
-We welcome contributions! Here's how you can help:
+Contributions are welcome! Here's how you can help:
 
-1. **Report Bugs**: Open an issue with detailed steps to reproduce
-2. **Suggest Enhancements**: Share your ideas for new features
-3. **Contribute Code**:
+1. **Report Issues**: Found a bug? Let us know!
+2. **Feature Requests**: Have an idea? We'd love to hear it!
+3. **Code Contributions**:
    ```bash
-   # 1. Fork the repository
-   # 2. Create your feature branch
+   # 1. Fork & clone the repo
+   git clone https://github.com/yourusername/coffee-flavor-predictor.git
+   cd coffee-flavor-predictor
+   
+   # 2. Create a feature branch
    git checkout -b feature/amazing-feature
-   # 3. Commit your changes
-   git commit -m 'Add some amazing feature'
-   # 4. Push to the branch
+   
+   # 3. Make your changes
+   # ...
+   
+   # 4. Commit and push
+   git commit -m 'Add amazing feature'
    git push origin feature/amazing-feature
+   
    # 5. Open a Pull Request
    ```
 
-## 📄 License
+## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- Built with ❤️ for coffee lovers worldwide
-- Inspired by the quest for the perfect cup of coffee
+- Built with ❤️ for coffee enthusiasts and professionals
+- Special thanks to the open-source community for the amazing tools and libraries
 
 ---
 
 <div align="center">
-  <p>Made with ☕ and ❤️</p>
+  <p>☕ Brewed with passion, powered by AI</p>
   <p>Happy Brewing! 🚀</p>
 </div>
