@@ -44,36 +44,13 @@ def load_latest_model():
         # Import the predictor class here to ensure proper module context
         from improved_predict import CoffeeFlavorPredictor
         
-        # Initialize the predictor
-        predictor = CoffeeFlavorPredictor()
-        
         # Get the latest model path
         latest_model = os.path.join(model_dir, model_files[0])
         logger.info(f"Loading model: {latest_model}")
         
         try:
-            # Try to load the model using joblib
-            import joblib
-            model_data = joblib.load(latest_model)
-            
-            # Check the structure of the loaded data
-            if isinstance(model_data, dict):
-                if 'model' in model_data:
-                    # New format with model and class definition
-                    predictor.model = model_data['model']
-                    logger.info(f"Model loaded (new format). Type: {type(predictor.model).__name__}")
-                elif 'class_def' in model_data:
-                    # Alternative format with class definition and model
-                    predictor.model = model_data['model']
-                    logger.info(f"Model loaded (alternative format). Type: {type(predictor.model).__name__}")
-                else:
-                    # Unknown dictionary format
-                    logger.error(f"Unexpected model data format. Keys: {list(model_data.keys())}")
-                    return None
-            else:
-                # Direct model (old format)
-                predictor.model = model_data
-                logger.info(f"Model loaded (old format). Type: {type(predictor.model).__name__}")
+            # Initialize the predictor and load the model using the proper method
+            predictor = CoffeeFlavorPredictor(latest_model)
             
             # Verify the model has the required methods
             if not hasattr(predictor.model, 'predict'):

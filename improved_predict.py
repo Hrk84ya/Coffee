@@ -27,6 +27,12 @@ class CoffeeFlavorPredictor:
     def __init__(self, model_path: str = None):
         """Initialize the predictor with a trained model."""
         self.model = None
+        self.scaler = None
+        self.feature_engineer = None
+        self.selector = None
+        self.numeric_features = []
+        self.categorical_features = []
+        self.feature_names = []
         self.feature_engineering = None
         self.expected_columns = [
             'Brewing_Method', 'Bean_Type', 'Roast_Level', 'Grind_Size',
@@ -54,9 +60,29 @@ class CoffeeFlavorPredictor:
                 # Store the model
                 self.model = model_data['model']
                 
-                # If model has feature engineering, use it
-                if hasattr(self.model, 'feature_engineering'):
-                    self.feature_engineering = self.model.feature_engineering
+                # Store preprocessing components with validation
+                self.scaler = model_data.get('scaler')
+                if self.scaler is None:
+                    raise ValueError("Scaler not found in saved model data")
+                
+                self.feature_engineer = model_data.get('feature_engineer')
+                self.selector = model_data.get('selector')
+                self.numeric_features = model_data.get('numeric_features', [])
+                self.categorical_features = model_data.get('categorical_features', [])
+                self.feature_names = model_data.get('feature_names', [])
+                
+                # Validate that all required components are present
+                if not self.feature_names:
+                    raise ValueError("Feature names not found in saved model data")
+                
+                # If feature engineer is not in model_data, create a new one
+                if self.feature_engineer is None:
+                    self.feature_engineer = AdvancedFeatureEngineering()
+                
+                logger.info(f"Model loaded (new format). Type: {type(self.model).__name__}")
+                logger.info(f"Scaler loaded: {self.scaler is not None}")
+                logger.info(f"Feature engineer loaded: {self.feature_engineer is not None}")
+                logger.info(f"Feature names count: {len(self.feature_names)}")
             else:
                 # For backward compatibility with old format
                 self.model = model_data
@@ -144,18 +170,33 @@ class CoffeeFlavorPredictor:
         if not self.model:
             raise ValueError("No model loaded. Please load a model first.")
         
+        if not self.scaler:
+            raise ValueError("No scaler loaded. Please load a model with preprocessing components.")
+        
         try:
             # Validate and convert input
             input_df = self.validate_input(input_data)
             
-            # Apply feature engineering
-            if self.feature_engineering:
-                input_engineered = self.feature_engineering.transform(input_df)
-            else:
-                input_engineered = input_df
+            # Apply the same preprocessing pipeline as training
+            from improved_model import preprocess_data
+            
+            # Step 1: Preprocess the data (scaling and one-hot encoding)
+            input_processed, _, _ = preprocess_data(
+                input_df, 
+                scaler=self.scaler, 
+                fit_scaler=False, 
+                feature_columns=self.feature_names
+            )
+            
+            # Step 2: Use the preprocessed data directly (it already includes engineered features)
+            input_final = input_processed
+            
+            # Convert to numpy array if it's a DataFrame (XGBoost expects numpy arrays)
+            if hasattr(input_final, 'values'):
+                input_final = input_final.values
             
             # Make prediction
-            prediction = self.model.predict(input_engineered)[0]
+            prediction = self.model.predict(input_final)[0]
             
             # Clip to reasonable range based on training data (1-10 scale)
             prediction = np.clip(prediction, 1, 10)
@@ -163,19 +204,25 @@ class CoffeeFlavorPredictor:
             # Calculate confidence based on prediction range and feature importance
             base_confidence = min(0.95, (prediction - 1) / 9 * 0.9 + 0.05)
             
-            # Get feature importance if available
+            # Get feature importance if available (from XGBoost component)
             feature_importance = {}
-            if hasattr(self.model.named_steps['regressor'], 'feature_importances_'):
-                try:
-                    importances = self.model.named_steps['regressor'].feature_importances_
-                    feature_names = list(input_engineered.columns)
-                    top_indices = np.argsort(importances)[-5:][::-1]  # Top 5 features
+            try:
+                if hasattr(self.model, 'estimators_'):
+                    xgb_model = None
+                    for name, estimator in self.model.estimators_:
+                        if name == 'xgb':
+                            xgb_model = estimator
+                            break
                     
-                    for idx in top_indices:
-                        if idx < len(feature_names):
-                            feature_importance[feature_names[idx]] = float(importances[idx])
-                except Exception as e:
-                    logger.warning(f"Could not calculate feature importance: {str(e)}")
+                    if xgb_model is not None and hasattr(xgb_model, 'feature_importances_'):
+                        importances = xgb_model.feature_importances_
+                        if self.feature_names:
+                            feature_importance_dict = dict(zip(self.feature_names, importances))
+                            # Get top 5 features
+                            sorted_importance = sorted(feature_importance_dict.items(), key=lambda x: x[1], reverse=True)
+                            feature_importance = dict(sorted_importance[:5])
+            except Exception as e:
+                logger.warning(f"Could not calculate feature importance: {str(e)}")
             
             # Generate suggestions for improvement
             suggestions = self._generate_suggestions(input_data, prediction, feature_importance)

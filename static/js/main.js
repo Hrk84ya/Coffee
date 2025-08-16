@@ -29,6 +29,7 @@ if (bitternessEl) bitternessEl.addEventListener('input', function() {
 const formEl = document.getElementById('coffeeForm');
 if (formEl) formEl.addEventListener('submit', async function(e) {
 	e.preventDefault();
+	console.log('Form submitted!'); // Debug logging
 	
 	// Show loading state
 	const submitBtn = document.getElementById('predictBtn');
@@ -46,10 +47,12 @@ if (formEl) formEl.addEventListener('submit', async function(e) {
 			grind_size: document.getElementById('grind_size').value,
 			water_temp: document.getElementById('water_temp').value,
 			brew_time: document.getElementById('brew_time').value,
-			coffee_water_ratio: document.getElementById('coffee_water_ratio').value,
+			coffee_water_ratio: (1 / parseFloat(document.getElementById('coffee_water_ratio').value)).toFixed(4),
 			acidity_pref: document.getElementById('acidity_pref').value,
 			bitterness_pref: document.getElementById('bitterness_pref').value
 		});
+		
+		console.log('Form data:', formData.toString()); // Debug logging
 		
 		// Send prediction request
 		const response = await fetch('/predict', {
@@ -60,8 +63,13 @@ if (formEl) formEl.addEventListener('submit', async function(e) {
 		
 		const data = await response.json();
 		
+		console.log('Prediction response:', data); // Debug logging
+		
 		const resultsDiv = document.getElementById('results');
+		console.log('Results div found:', resultsDiv); // Debug logging
+		
 		if (data.success) {
+			console.log('Prediction successful, displaying results...'); // Debug logging
 			// Display results
 			document.getElementById('predictionScore').textContent = data.prediction.score;
 			document.getElementById('confidence').textContent = data.prediction.confidence;
@@ -73,9 +81,14 @@ if (formEl) formEl.addEventListener('submit', async function(e) {
 			chipsContainer.innerHTML = '';
 			chips.forEach(ch => chipsContainer.appendChild(ch));
 			
-			resultsDiv.style.display = 'block';
+			// Force show the results div with inline styles
+			resultsDiv.style.setProperty('display', 'block', 'important');
+			resultsDiv.style.visibility = 'visible';
+			resultsDiv.style.opacity = '1';
 			resultsDiv.scrollIntoView({ behavior: 'smooth' });
+			console.log('Results displayed successfully'); // Debug logging
 		} else {
+			console.log('Prediction failed:', data.error); // Debug logging
 			resultsDiv.innerHTML = `
 				<div class="card">
 					<h3>Something went wrong</h3>
