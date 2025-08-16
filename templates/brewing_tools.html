@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="tools-container">
+    <h1>Brewing Tools</h1>
+    <p class="subtitle">Essential tools to help you brew the perfect cup</p>
+    
+    <!-- Timer Section -->
+    <div class="card">
+        <h2><i class="fas fa-stopwatch"></i> Brew Timer</h2>
+        <p>Set a timer for your perfect brew</p>
+        
+        <div class="timer-display" id="timer-display">00:00</div>
+        
+        <div class="form-group">
+            <label for="timer-input">Set timer (minutes):</label>
+            <input type="number" id="timer-input" min="1" max="60" value="3">
+        </div>
+        
+        <div class="timer-presets">
+            <button class="timer-preset" data-minutes="1">1 min</button>
+            <button class="timer-preset" data-minutes="2">2 min</button>
+            <button class="timer-preset" data-minutes="3">3 min</button>
+            <button class="timer-preset" data-minutes="4">4 min</button>
+            <button class="timer-preset" data-minutes="5">5 min</button>
+        </div>
+        
+        <div class="timer-controls">
+            <button id="start-timer" class="btn"><i class="fas fa-play"></i> Start</button>
+            <button id="pause-timer" class="btn" disabled><i class="fas fa-pause"></i> Pause</button>
+            <button id="reset-timer" class="btn"><i class="fas fa-redo"></i> Reset</button>
+        </div>
+        
+        <p class="timer-hint">Enable browser notifications for timer alerts</p>
+    </div>
+    
+    <!-- Brewing Calculator Section -->
+    <div class="card">
+        <h2><i class="fas fa-calculator"></i> Coffee Calculator</h2>
+        <p>Calculate the perfect coffee to water ratio</p>
+        
+        <form id="calculator-form" class="calculator-form">
+            <div class="form-group">
+                <label for="coffee-amount">Coffee (g):</label>
+                <input type="number" id="coffee-amount" step="0.1" min="0" placeholder="Enter coffee or water">
+            </div>
+            
+            <div class="form-group">
+                <label for="water-amount">Water (g/ml):</label>
+                <input type="number" id="water-amount" step="1" min="0" placeholder="Enter water or coffee">
+            </div>
+            
+            <div class="form-group">
+                <label for="ratio">Coffee to Water Ratio:</label>
+                <div class="range-container">
+                    <span id="ratio-value">1:16.7</span>
+                    <input type="range" id="ratio" min="12" max="20" step="0.1" value="16.7">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-block" id="calculate-ratio">
+                <i class="fas fa-calculator"></i> Calculate
+            </button>
+            
+            <div id="calculator-result" class="calculator-result"></div>
+        </form>
+    </div>
+</div>
+
+<style>
+.tools-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Timer Styles */
+.timer-display {
+    font-size: 4rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 1.5rem 0;
+    color: var(--mocha);
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+}
+
+.timer-presets {
+    display: flex;
+    gap: 0.75rem;
+    margin: 1.25rem 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.timer-preset {
+    background: var(--beige);
+    border: 1px solid rgba(111, 78, 55, 0.2);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.timer-preset:hover {
+    background: var(--copper);
+    color: white;
+    border-color: var(--copper);
+}
+
+.timer-controls {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.timer-controls .btn {
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.timer-hint {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 1rem;
+    font-style: italic;
+}
+
+/* Calculator Styles */
+.calculator-form {
+    margin-top: 1.5rem;
+}
+
+.calculator-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.calculator-form input[type="number"] {
+    padding: 0.8rem 1rem;
+    border: 1px solid rgba(44,24,16,0.15);
+    border-radius: 10px;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.calculator-form input:focus {
+    outline: none;
+    border-color: var(--copper);
+    box-shadow: 0 0 0 2px rgba(184, 115, 51, 0.25);
+}
+
+.calculator-result {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(156, 175, 136, 0.1);
+    border-radius: 8px;
+    border-left: 4px solid var(--sage);
+    display: none;
+    transition: all 0.3s ease;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+    .timer-display {
+        font-size: 3rem;
+    }
+    
+    .timer-controls {
+        flex-direction: column;
+    }
+    
+    .timer-controls .btn {
+        width: 100%;
+    }
+    
+    .timer-presets {
+        gap: 0.5rem;
+    }
+    
+    .timer-preset {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
+</style>
+
+<!-- Include the brewing tools JavaScript -->
+<script src="{{ url_for('static', filename='js/brewing-tools.js') }}"></script>
+{% endblock %}

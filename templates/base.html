@@ -88,7 +88,34 @@
             margin-bottom: 0.25rem;
             text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .tagline { font-weight: 300; opacity: 0.95; font-size: 1.05rem; margin-top: 0.35rem; }
+        .tagline { font-weight: 300; opacity: 0.95; font-size: 1.05rem; margin: 0.35rem 0 0.5rem; }
+
+/* Navigation */
+.main-nav {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 0.75rem;
+    justify-content: center;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    font-weight: 400;
+    font-size: 0.95rem;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.nav-link.active {
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.1);
+}
         
         /* Main */
         main { padding: 4.5rem 0; min-height: calc(100vh - 300px); }
@@ -319,6 +346,10 @@
                     <div class="logo-text">
                         <h1 class="logo">Coffee Flavour Predictor</h1>
                         <p class="tagline">Brew inputs in. Flavor notes out.</p>
+                        <nav class="main-nav">
+                            <a href="/" class="nav-link">Home</a>
+                            <a href="/brewing-tools" class="nav-link">Brewing Tools</a>
+                        </nav>
                     </div>
                 </div>
             </div>
